@@ -18,9 +18,11 @@ func main() {
 
 	movieHendlers := handlers.NewMoviesHendler()
 
-	r.POST("/movie", movieHendlers.Create)
-	r.PUT("/movie/:id", movieHendlers.Update)
-	r.GET("/movie", movieHendlers.FindAll)
+	r.POST("/movies", movieHendlers.Create)
+	r.PUT("/movies/:id", movieHendlers.Update)
+	r.GET("/movies", movieHendlers.FindAll)
+	r.GET("/movies/:id", movieHendlers.FindByID)
+	r.DELETE("/movies/:id", movieHendlers.Delete)
 
-	r.Run("0.0.0.0:8082")
+	r.Run(":8083")
 }

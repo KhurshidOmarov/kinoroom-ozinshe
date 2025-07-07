@@ -23,9 +23,9 @@ func NewMoviesHendler() *MovieHendlers {
 				Director:    "Оливье Накаш",
 				Rating:      0,
 				IsWatched:   false,
-				TrailerUrl:  "https://www.youtube.com/watch?v=m95M-I7Ij0o&ab_channel=%D0%9A%D0%B8%D0%BD%D0%BE%D0%92%D0%B8%D1%85%D1%80%D1%8C",
+				TrailerUrl:  "https://flcksbr.top/film/535341/",
 				PosterUrl:   "",
-				Genre:       make([]models.Genre, 0),
+				Genres:      make([]models.Genre, 0),
 			},
 			2: {
 				Id:          2,
@@ -37,7 +37,7 @@ func NewMoviesHendler() *MovieHendlers {
 				IsWatched:   false,
 				TrailerUrl:  "https://www.youtube.com/watch?v=6ybBuTETr3U",
 				PosterUrl:   "",
-				Genre:       make([]models.Genre, 0),
+				Genres:      make([]models.Genre, 0),
 			},
 			3: {
 				Id:          3,
@@ -49,7 +49,7 @@ func NewMoviesHendler() *MovieHendlers {
 				IsWatched:   false,
 				TrailerUrl:  "https://www.youtube.com/watch?v=kgAeKpAPOYk&ab_channel=%D0%A2%D1%80%D0%B5%D0%B9%D0%BB%D0%B5%D1%80%D1%8B%D0%BA%D1%84%D0%B8%D0%BB%D1%8C%D0%BC%D0%B0%D0%BC",
 				PosterUrl:   "",
-				Genre:       make([]models.Genre, 0),
+				Genres:      make([]models.Genre, 0),
 			},
 			4: {
 				Id:          4,
@@ -61,7 +61,7 @@ func NewMoviesHendler() *MovieHendlers {
 				IsWatched:   false,
 				TrailerUrl:  "https://www.youtube.com/watch?v=C7-7qQ61QHU&ab_channel=%D0%A2%D1%80%D0%B5%D0%B9%D0%BB%D0%B5%D1%80%D1%8B%D0%BA%D1%84%D0%B8%D0%BB%D1%8C%D0%BC%D0%B0%D0%BC",
 				PosterUrl:   "",
-				Genre:       make([]models.Genre, 0),
+				Genres:      make([]models.Genre, 0),
 			},
 			5: {
 				Id:          5,
@@ -73,7 +73,7 @@ func NewMoviesHendler() *MovieHendlers {
 				IsWatched:   false,
 				TrailerUrl:  "https://www.youtube.com/watch?v=_l7R9Rz5URw&ab_channel=%D0%A2%D1%80%D0%B5%D0%B9%D0%BB%D0%B5%D1%80%D1%8B%D0%BA%D1%84%D0%B8%D0%BB%D1%8C%D0%BC%D0%B0%D0%BC",
 				PosterUrl:   "",
-				Genre:       make([]models.Genre, 0),
+				Genres:      make([]models.Genre, 0),
 			},
 			6: {
 				Id:          6,
@@ -85,7 +85,7 @@ func NewMoviesHendler() *MovieHendlers {
 				IsWatched:   false,
 				TrailerUrl:  "https://www.youtube.com/watch?v=YoHD9XEInc0",
 				PosterUrl:   "",
-				Genre:       make([]models.Genre, 0),
+				Genres:      make([]models.Genre, 0),
 			},
 
 			7: {
@@ -98,7 +98,7 @@ func NewMoviesHendler() *MovieHendlers {
 				IsWatched:   false,
 				TrailerUrl:  "https://www.youtube.com/watch?v=Ki4haFrqSrw",
 				PosterUrl:   "",
-				Genre:       make([]models.Genre, 0),
+				Genres:      make([]models.Genre, 0),
 			},
 
 			8: {
@@ -111,7 +111,7 @@ func NewMoviesHendler() *MovieHendlers {
 				IsWatched:   false,
 				TrailerUrl:  "https://www.youtube.com/watch?v=o4gHCmTQDVI",
 				PosterUrl:   "",
-				Genre:       make([]models.Genre, 0),
+				Genres:      make([]models.Genre, 0),
 			},
 
 			9: {
@@ -124,7 +124,7 @@ func NewMoviesHendler() *MovieHendlers {
 				IsWatched:   false,
 				TrailerUrl:  "https://www.youtube.com/watch?v=S5CjKEFb-sM",
 				PosterUrl:   "",
-				Genre:       make([]models.Genre, 0),
+				Genres:      make([]models.Genre, 0),
 			},
 
 			10: {
@@ -137,10 +137,49 @@ func NewMoviesHendler() *MovieHendlers {
 				IsWatched:   false,
 				TrailerUrl:  "https://www.youtube.com/watch?v=znmZoVkCjpI",
 				PosterUrl:   "",
-				Genre:       make([]models.Genre, 0),
+				Genres:      make([]models.Genre, 0),
 			},
 		},
 	}
+}
+
+func (h *MovieHendlers) FindByID(c *gin.Context) {
+	idStr := c.Param("id")
+	id, err := strconv.Atoi(idStr)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, models.NewApiError("Invalid ID format"))
+		return
+	}
+
+	movie, exists := h.bd[id]
+	if !exists {
+		c.JSON(http.StatusNotFound, models.NewApiError("Movie not found"))
+		return
+	}
+
+	c.JSON(http.StatusOK, movie)
+}
+
+func (h *MovieHendlers) Delete(c *gin.Context) {
+	idStr := c.Param("id")
+	id, err := strconv.Atoi(idStr)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, models.NewApiError("Invalid ID format"))
+		return
+	}
+
+	_, exists := h.bd[id]
+	if !exists {
+		c.JSON(http.StatusNotFound, models.NewApiError("Movie not found"))
+		return
+	}
+
+	delete(h.bd, id)
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Movie deleted successfully",
+	})
 }
 
 func (h *MovieHendlers) FindAll(c *gin.Context) {
@@ -163,7 +202,7 @@ func (h *MovieHendlers) Create(c *gin.Context) {
 	id := len(h.bd) + 1
 
 	n.Id = id
-	n.Genre = make([]models.Genre, 0)
+	n.Genres = make([]models.Genre, 0)
 
 	h.bd[id] = n
 
@@ -205,7 +244,7 @@ func (h *MovieHendlers) Update(c *gin.Context) {
 	originalMovie.TrailerUrl = updatedMuvie.TrailerUrl
 	originalMovie.WatchUrl = updatedMuvie.WatchUrl
 	originalMovie.PosterUrl = updatedMuvie.PosterUrl
-	originalMovie.Genre = updatedMuvie.Genre
+	originalMovie.Genres = updatedMuvie.Genres
 
 	h.bd[id] = originalMovie
 
