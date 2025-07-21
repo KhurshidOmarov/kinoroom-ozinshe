@@ -12,4 +12,5 @@ type Movie struct {
 	WatchUrl    string
 	PosterUrl   string  // not imlemented
 	Genres      []Genre // not imlemented
+
 }
